@@ -1,6 +1,7 @@
 import bpy, bmesh, math
 
 from .vertexGroup import c_vertexGroup
+from .. import export_ctx
 
 class c_vertexGroups(object):
     def __init__(self, offsetVertexGroups):
@@ -9,7 +10,7 @@ class c_vertexGroups(object):
         def get_vertexGroups(self, offsetVertexGroups):
             vertexGroupIndex = []
 
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'MESH':
                     obj_name = obj.name.split('-')
                     obj_vertexGroupIndex = int(obj_name[-1])
@@ -23,8 +24,9 @@ class c_vertexGroups(object):
             vertexGroups = []
             for index in vertexGroupIndex:
                 print('[+] Creating Vertex Group', index)
-                vertexGroups.append(c_vertexGroup(index, vertexesOffset))
-                vertexesOffset += vertexGroups[index].vertexGroupSize
+                vertexGroup = c_vertexGroup(index, vertexesOffset)
+                vertexGroups.append(vertexGroup)
+                vertexesOffset += vertexGroup.vertexGroupSize
             return vertexGroups
 
         self.vertexGroups = get_vertexGroups(self, self.offsetVertexGroups)

@@ -1,5 +1,6 @@
 import bpy, bmesh, math
 from ..util import Vector3
+from .. import export_ctx
 
 class c_bones(object):
     def __init__(self):
@@ -7,13 +8,13 @@ class c_bones(object):
         def get_bones(self):
             _bones = []
             numBones = 0
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'ARMATURE':
                     numBones = len(obj.data.bones)
                     first_bone = obj.data.bones[0]
 
             if numBones > 1:
-                for obj in bpy.data.objects:
+                for obj in export_ctx.objects:
                     if obj.type == 'ARMATURE':
                         for indx, bone in enumerate(obj.data.bones):
                             ID = bone['ID']
@@ -41,7 +42,7 @@ class c_bones(object):
                             _bones.append(bone)
                 
             elif numBones == 1:
-                for obj in bpy.data.objects:
+                for obj in export_ctx.objects:
                     if obj.type == 'ARMATURE':
                         for bone in obj.data.bones:
                             ID = bone['ID']

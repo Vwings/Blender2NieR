@@ -1,17 +1,18 @@
 import bpy, bmesh, math
+from .. import export_ctx
 
 class c_meshMaterials(object):
     def __init__(self, meshes, lods):
         def get_meshMaterials(self):
             meshMaterials = []
             for mesh_indx, mesh in enumerate(meshes.meshes):
-                for obj in bpy.data.objects:
+                for obj in export_ctx.objects:
                     if obj.type == 'MESH':
                         if obj['meshGroupIndex'] == mesh_indx:
                             blenderObj = obj
                             for slot in blenderObj.material_slots:
                                 material = slot.material
-                                for mat_indx, mat in enumerate(bpy.data.materials):
+                                for mat_indx, mat in enumerate(export_ctx.materials):
                                     if mat == material:
                                         struct = [mesh_indx, mat_indx]
                                         if struct not in meshMaterials:

@@ -1,4 +1,5 @@
 import bpy, bmesh, math
+from .. import export_ctx
 
 class c_boneIndexTranslateTable(object):
     def __init__(self, bones):
@@ -7,7 +8,7 @@ class c_boneIndexTranslateTable(object):
         self.secondLevel = []
         self.thirdLevel = []
 
-        for obj in bpy.data.objects:
+        for obj in export_ctx.objects:
             if obj.type == 'ARMATURE':
                 for idx in range(len(obj.data['firstLevel'])):
                     self.firstLevel.append(obj.data['firstLevel'][idx])

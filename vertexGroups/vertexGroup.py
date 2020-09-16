@@ -2,6 +2,7 @@ import bpy, bmesh, math, mathutils
 import numpy as np
 import math
 from ..util import Vector3
+from .. import export_ctx
 
 class c_vertexGroup(object):
     def __init__(self, vertexGroupIndex, vertexesStart):
@@ -10,7 +11,7 @@ class c_vertexGroup(object):
 
         def get_blenderObjects(self):
             objs = {}
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'MESH':
                     obj_name = obj.name.split('-')
                     if int(obj_name[-1]) == vertexGroupIndex:
@@ -80,7 +81,7 @@ class c_vertexGroup(object):
 
         def get_boneMap(self):
             boneMap = []
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'ARMATURE':
                     boneMapRef = obj.data["boneMap"]
                     for val in boneMapRef:
@@ -91,7 +92,7 @@ class c_vertexGroup(object):
 
         def get_boneSet(self, boneSetIndex):
             boneSet = []
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'ARMATURE':
                     boneSetArrayRef = obj.data["boneSetArray"][boneSetIndex]
                     for val in boneSetArrayRef:
@@ -147,10 +148,11 @@ class c_vertexGroup(object):
                                         boneGroupName = bvertex_obj[1].vertex_groups[groupRef.group].name
                                         boneID = int(boneGroupName.replace("bone", ""))
 
-                                        boneMapIndx = self.boneMap.index(boneID)
-                                        boneSetIndx = boneSet.index(boneMapIndx)
-                                        
-                                        boneIndexes.append(boneSetIndx)
+                                        if boneID in self.boneMap:
+                                            boneMapIndx = self.boneMap.index(boneID)
+                                            boneSetIndx = boneSet.index(boneMapIndx)
+                                            
+                                            boneIndexes.append(boneSetIndx)
                                 
                                 if len(boneIndexes) == 0:
                                     print(len(vertexes) ,"- Vertex Weights Error: Vertex has no assigned groups. At least 1 required. Try using Blender's [Select -> Select All By Trait > Ungrouped Verts] function to find them.")

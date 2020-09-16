@@ -2,6 +2,7 @@ import bpy
 import os
 from bpy_extras.io_utils import ExportHelper,ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
+from .. import export_ctx
 
 def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
 
@@ -25,7 +26,7 @@ class GetMaterialsOperator(bpy.types.Operator):
 
     def execute(self, context):
         context.scene.WTAMaterials.clear()
-        for mat in bpy.data.materials:
+        for mat in export_ctx.materials:
             for key, value in mat.items():
                 # Only include listed textures map types
                 if any(substring in key for substring in ['g_AlbedoMap', 'g_MaskMap', 'g_NormalMap', 'g_EnvMap', 'g_DetailNormalMap', 'g_IrradianceMap', 'g_CurvatureMap', 'g_SpreadPatternMap']):
@@ -68,10 +69,10 @@ class PurgeUnusedMaterials(bpy.types.Operator):
     bl_label = "Purge Materials"
 
     def execute(self, context):
-        for material in bpy.data.materials:
+        for material in export_ctx.materials:
             if not material.users:
                 print('Purging unused material:', material)
-                bpy.data.materials.remove(material)
+                export_ctx.materials.remove(material)
         return{'FINISHED'}
 
 class ExportWTPOperator(bpy.types.Operator, ExportHelper):
@@ -127,7 +128,7 @@ class SyncBlenderMaterials(bpy.types.Operator):
         for item in context.scene.WTAMaterials:
             if item.texture_path == "None":
                 continue
-            for mat in bpy.data.materials:
+            for mat in export_ctx.materials:
                 if mat.name == item.parent_mat:
                     nodes = mat.node_tree.nodes
                     for node in nodes:
@@ -146,7 +147,7 @@ class SyncMaterialIdentifiers(bpy.types.Operator):
 
     def execute(self, context):
         for item in context.scene.WTAMaterials:
-            for mat in bpy.data.materials:
+            for mat in export_ctx.materials:
                 if mat.name == item.parent_mat:
                     for key in mat.keys():
                         if key == item.texture_map_type:

@@ -1,11 +1,12 @@
 import bpy, bmesh, math
+from .. import export_ctx
 
 class c_boneSet(object):
     def __init__(self, boneMap, boneSets_Offset):
 
         def get_blender_boneSets(self):
             b_boneSets = []
-            for obj in bpy.data.objects:
+            for obj in export_ctx.objects:
                 if obj.type == 'ARMATURE':
                     for boneSet in obj.data['boneSetArray']:
                         b_boneSets.append(boneSet)
@@ -41,7 +42,7 @@ class c_boneSet(object):
 class c_b_boneSets(object):
     def __init__(self):
         # Find Armature
-        for obj in bpy.data.objects:
+        for obj in export_ctx.objects:
             if obj.type == 'ARMATURE':
                 amt = obj
 
@@ -52,14 +53,17 @@ class c_b_boneSets(object):
 
         # Get boneSets
         b_boneSets = []
-        for obj in bpy.data.objects:
+        for obj in export_ctx.objects:
             if obj.type == 'MESH':
                 vertex_group_bones = []
                 if obj['boneSetIndex'] != -1:
                     for group in obj.vertex_groups:
                         boneID = int(group.name.replace("bone", ""))
-                        boneMapIndx = boneMap.index(boneID)
-                        vertex_group_bones.append(boneMapIndx)
+                        try:
+                            boneMapIndx = boneMap.index(boneID)
+                            vertex_group_bones.append(boneMapIndx)
+                        except:
+                            pass
                     if vertex_group_bones not in b_boneSets:
                         b_boneSets.append(vertex_group_bones)
                         obj["boneSetIndex"] = len(b_boneSets)-1

@@ -14,29 +14,28 @@ from .wmb.wmb_materials import *
 from .wmb.wmb_boneSet import *
 from .wmb.wmb_colTreeNodes import *
 from .wmb.wmb_unknownWorldData import *
+from . import export_ctx
 
 import time
 
-normals_flipped = False
-
-def flip_all_normals():
-    normals_flipped = True
-    for obj in bpy.data.objects:
-        if obj.type == 'MESH':
-            obj.data.flip_normals()
+def flip_all_normals(normals_flipped):
+    if normals_flipped:
+        for obj in export_ctx.objects:
+            if obj.type == 'MESH':
+                obj.data.flip_normals()
     print('Flipped normals of all meshes.')
 
 def purge_unused_materials():
-    for material in bpy.data.materials:
+    for material in export_ctx.materials:
         if not material.users:
             print('Purging unused material:', material)
-            bpy.data.materials.remove(material)
+            export_ctx.materials.remove(material)
 
 def prepare_blend():
     print('Preparing .blend File:')
     bpy.ops.object.mode_set(mode='OBJECT')
     print('Triangulating meshes:')
-    for obj in bpy.data.objects:
+    for obj in export_ctx.objects:
         if obj.type == 'MESH':
 
             # Triangulate meshes
@@ -47,24 +46,12 @@ def prepare_blend():
             else:    
                 bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Triangulate")
 
-        if obj.type not in ['MESH', 'ARMATURE']:
-            print('[-] Removed ', obj)
-            bpy.data.objects.remove(obj)
 
-def restore_blend(normals_flipped):
-    print('Restoring .blend File:')
-    if normals_flipped:
-        print(' - Flipping back normals.')
-        for obj in bpy.data.objects:
-            if obj.type == 'MESH':
-                obj.data.flip_normals()
-    print('EXPORT COMPLETE. :D')
-    return {'FINISHED'}
 
 def main(filepath):
     start_time = int(time.time())
     prepare_blend()
-    
+
     wmb_file = create_wmb(filepath)
 
     generated_data = c_generate_data()

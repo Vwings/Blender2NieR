@@ -1,9 +1,10 @@
 import bpy, bmesh, math
+from .. import export_ctx
 
 class c_boneMap(object):
     def __init__(self, bones):
         boneMap = []
-        for obj in bpy.data.objects:
+        for obj in export_ctx.objects:
             if obj.type == 'ARMATURE':
                 boneMap = obj.data['boneMap']
         

@@ -1,4 +1,5 @@
 import bpy, bmesh, math, mathutils
+from .. import export_ctx
 
 class c_lod(object):
     def __init__(self, lodsStart, batches, lod_level):
@@ -17,7 +18,7 @@ class c_lod(object):
 
                 for slot in batch.blenderObj.material_slots:
                     material = slot.material
-                for mat_indx, mat in enumerate(bpy.data.materials):
+                for mat_indx, mat in enumerate(export_ctx.materials):
                     if mat == material:
                         materialIndex = mat_indx
                         break

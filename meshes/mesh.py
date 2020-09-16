@@ -1,4 +1,5 @@
 import bpy, bmesh, math
+from .. import export_ctx
 
 class c_mesh(object):
     def __init__(self, offsetMeshes, numMeshes, obj):
@@ -16,11 +17,11 @@ class c_mesh(object):
         def get_materials(self, obj):
             materials = []
             obj_mesh_name = obj.name.split('-')[1]
-            for mesh in bpy.data.objects:
+            for mesh in export_ctx.objects:
                 if mesh.type == 'MESH' and mesh.name.split('-')[1] == obj_mesh_name:
                     for slot in mesh.material_slots:
                         material = slot.material
-                        for indx, mat in enumerate(bpy.data.materials):
+                        for indx, mat in enumerate(export_ctx.materials):
                             if mat == material:
                                 matID = indx
                                 if matID not in materials:
@@ -32,7 +33,7 @@ class c_mesh(object):
         def get_bones(self, obj):
             bones = []
             obj_mesh_name = obj.name.split('-')[1]
-            for mesh in bpy.data.objects:
+            for mesh in export_ctx.objects:
                 if mesh.type == 'MESH' and mesh.name.split('-')[1] == obj_mesh_name:
                     for vertexGroup in mesh.vertex_groups:
                         boneName = vertexGroup.name.replace('bone', '')

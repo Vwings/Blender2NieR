@@ -11,6 +11,7 @@ from .meshes.meshMaterials import *
 from .boneSet.boneSet import *
 from .colTreeNodes.colTreeNodes import *
 from .unknownWorldData.unknownWorldData import *
+from . import export_ctx
 
 class c_generate_data(object):
     def __init__(self):
@@ -18,7 +19,7 @@ class c_generate_data(object):
         hasColTreeNodes = False
         hasUnknownWorldData = False
 
-        for obj in bpy.data.objects:
+        for obj in export_ctx.objects:
             if obj.type == 'ARMATURE':
                 print('Armature found, exporting bones structures.')
                 hasArmature = True
